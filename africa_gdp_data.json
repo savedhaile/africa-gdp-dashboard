@@ -1,0 +1,32 @@
+[
+  {
+    "country": "South Africa",
+    "gdp": 410.34,
+    "population": 64146000,
+    "gdp_per_capita": 6397
+  },
+  {
+    "country": "Egypt",
+    "gdp": 347.34,
+    "population": 109450000,
+    "gdp_per_capita": 3174
+  },
+  {
+    "country": "Nigeria",
+    "gdp": 252.46,
+    "population": 223800000,
+    "gdp_per_capita": 1128
+  },
+  {
+    "country": "Kenya",
+    "gdp": 110.35,
+    "population": 55610000,
+    "gdp_per_capita": 1984
+  },
+  {
+    "country": "Morocco",
+    "gdp": 149.14,
+    "population": 37840000,
+    "gdp_per_capita": 3941
+  }
+]
