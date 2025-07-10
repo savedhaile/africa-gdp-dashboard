@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Africa GDP Dashboard</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; }
+    #map { width: 100%; height: 600px; }
+    .tooltip {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 8px;
+      pointer-events: none;
+      font-size: 14px;
+    }
+    #info {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 12px;
+      width: 250px;
+    }
+  </style>
+</head>
+<body>
+  <svg id="map"></svg>
+  <div id="info"><strong>Click a country</strong> to see GDP info.</div>
+  <script>
+    const width = 960, height = 600;
+    const svg = d3.select("#map").attr("width", width).attr("height", height);
+    const projection = d3.geoMercator().scale(500).center([20, 0]).translate([width / 2, height / 2]);
+    const path = d3.geoPath().projection(projection);
+    const tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+
+    const gdpData = {
+      "South Africa": {gdp: 410.34, population: 64146000, gdp_per_capita: 6397},
+      "Egypt": {gdp: 347.34, population: 109450000, gdp_per_capita: 3174},
+      "Nigeria": {gdp: 252.46, population: 223800000, gdp_per_capita: 1128},
+      "Kenya": {gdp: 110.35, population: 55610000, gdp_per_capita: 1984},
+      "Morocco": {gdp: 149.14, population: 37840000, gdp_per_capita: 3941}
+    };
+
+    d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
+      const africa = data.features.filter(d => d.properties.region_un === "Africa");
+
+      svg.selectAll("path")
+        .data(africa)
+        .enter().append("path")
+        .attr("d", path)
+        .attr("fill", "#cce5df")
+        .attr("stroke", "#333")
+        .on("mouseover", function(event, d) {
+          const name = d.properties.name;
+          const info = gdpData[name];
+          tooltip.transition().duration(200).style("opacity", .9);
+          tooltip.html(`<strong>${name}</strong><br/>GDP: ${info ? info.gdp + " B USD" : "N/A"}`)
+                 .style("left", (event.pageX + 10) + "px")
+                 .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function() {
+          tooltip.transition().duration(500).style("opacity", 0);
+        })
+        .on("click", function(event, d) {
+          const name = d.properties.name;
+          const info = gdpData[name];
+          if (info) {
+            d3.select("#info").html(`
+              <strong>${name}</strong><br/>
+              GDP: ${info.gdp} Billion USD<br/>
+              Population: ${info.population.toLocaleString()}<br/>
+              GDP per Capita: ${info.gdp_per_capita} USD
+            `);
+          } else {
+            d3.select("#info").html(`<strong>${name}</strong><br/>No GDP data available.`);
+          }
+        });
+    });
+  </script>
+</body>
+</html>
